@@ -221,7 +221,7 @@ public class GeoCode {
         return btsGeocodeStreets.size();
     }
 
-    String clearSearchString(String searchString) {
+    public static String clearSearchString(String searchString) {
         searchString = searchString.toLowerCase();
         searchString = StringUtils.normalizeSpace(searchString);
         searchString = searchString.replace(" улица ", " ");
@@ -313,7 +313,7 @@ public class GeoCode {
         return searchString;
     }
 
-    String replaceSearchStringLast(String searchString, String target, String replacement) {
+    private static String replaceSearchStringLast(String searchString, String target, String replacement) {
         if (searchString.endsWith(target)) {
             searchString = searchString.substring(0, searchString.length() - target.length()) + replacement;
         }

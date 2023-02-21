@@ -9,13 +9,15 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 import static tools.MainUtils.boolToInt;
 
 public class Order {
-    List<RoutePoint> route;
+    private final List<RoutePoint> route;
+    private final LocationsCache locationsCache;
     int distance;
     int duration;
     int pickDistance;
@@ -24,7 +26,13 @@ public class Order {
     City city;
     boolean isAirport = false;
     boolean isTransCity = false;
-    LocationsCache locationsCache;
+    private boolean isHour;
+    private boolean isPrior;
+    private LocalDateTime regDate;
+    private LocalDateTime workDate;
+    private int clientID;
+    private String calledID;
+    private String callerID;
 
     public Order() {
         route = new ArrayList<>();
@@ -107,6 +115,62 @@ public class Order {
         } // if (!route.isEmpty()) {
     }
 
+    public boolean isHour() {
+        return isHour;
+    }
+
+    public void setHour(boolean hour) {
+        isHour = hour;
+    }
+
+    public boolean isPrior() {
+        return isPrior;
+    }
+
+    public void setPrior(boolean prior) {
+        isPrior = prior;
+    }
+
+    public LocalDateTime getRegDate() {
+        return regDate;
+    }
+
+    public void setRegDate(LocalDateTime regDate) {
+        this.regDate = regDate;
+    }
+
+    public LocalDateTime getWorkDate() {
+        return workDate;
+    }
+
+    public void setWorkDate(LocalDateTime workDate) {
+        this.workDate = workDate;
+    }
+
+    public int getClientID() {
+        return clientID;
+    }
+
+    public void setClientID(int clientID) {
+        this.clientID = clientID;
+    }
+
+    public String getCalledID() {
+        return calledID;
+    }
+
+    public void setCalledID(String calledID) {
+        this.calledID = calledID;
+    }
+
+    public String getCallerID() {
+        return callerID;
+    }
+
+    public void setCallerID(String callerID) {
+        this.callerID = callerID;
+    }
+
     public void setCityByID(Integer cityID) throws CacheException {
         this.city = ATaxiApplication.getInstance().getCity(cityID);
     }
@@ -147,6 +211,9 @@ public class Order {
         if (isAirport){directions.put("is_airport", true);}
         if (isTransCity){directions.put("is_trans_city", true);}
         result.put("directions", directions);
+
+        result.put("calledID", calledID);
+        result.put("callerID", callerID);
 
         result.put("ataxi_data", getATaxiData());
 

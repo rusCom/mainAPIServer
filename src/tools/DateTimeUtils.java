@@ -7,6 +7,8 @@ import java.time.format.DateTimeFormatter;
 public class DateTimeUtils {
 
     public static LocalDateTime convertFromCache(String cacheDate) {
+        if (cacheDate.equals(""))return null;
+        if (cacheDate.equals("0"))return null;
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
         return LocalDateTime.parse(cacheDate, formatter);
     }

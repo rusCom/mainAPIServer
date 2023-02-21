@@ -213,6 +213,19 @@ public class MainUtils {
         if (data)return 1;
         return 0;
     }
+
+    public static Boolean parseBoolean(String data){
+        return parseBoolean(data, false);
+    }
+
+    public static Boolean parseBoolean(String data, Boolean def){
+        if (data == null)return def;
+        if (data.equals(""))return def;
+        if (data.equals("1"))return true;
+        if (data.equals("true"))return true;
+        return Boolean.parseBoolean(data);
+    }
+
     public static Integer JSONGetInteger(JSONObject data, String field) {
         Integer result = null;
         if (data.has(field)) {

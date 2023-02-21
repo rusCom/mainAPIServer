@@ -5,7 +5,6 @@ import aTaxi.taximeter.TaximeterAppServer;
 import com.intersys.objects.CacheException;
 import geo.GeoAppServer;
 import geo.GeoApplication;
-import geo.tools.GeoCode;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -24,11 +23,13 @@ import java.net.URLConnection;
 import java.sql.SQLException;
 
 public class MainAPIHandler extends AbstractHandler {
-    ATaxiApplication aTaxiApplication;
+    private final ATaxiApplication aTaxiApplication;
+    private final GeoApplication geoApplication;
 
     public MainAPIHandler() throws CacheException {
         MainUtils.getInstance().printLog("main", "create MainAPIHandler");
         aTaxiApplication = ATaxiApplication.getInstance();
+        geoApplication = GeoApplication.getInstance();
     }
 
     @Override
@@ -56,7 +57,7 @@ public class MainAPIHandler extends AbstractHandler {
                         serverType = targets[1];
                         switch (serverType) {
                             case "geo" ->
-                                    appServerResponse = (new GeoAppServer(aTaxiApplication)).response(target, baseRequest);
+                                    appServerResponse = (new GeoAppServer(aTaxiApplication, geoApplication)).response(target, baseRequest);
                             case "ataxi" -> {
                                 if (targets.length != 2) {
                                     serverType = "ataxi";

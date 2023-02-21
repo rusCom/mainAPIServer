@@ -14,13 +14,12 @@ import geo.data.Location;
 import org.eclipse.jetty.server.Request;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import tools.AppServer;
-import tools.AppServerResponse;
-import tools.CheckDataException;
+import tools.*;
 
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Arrays;
 
 public class MainAppServer extends AppServer {
     private final ATaxiApplication aTaxiApplication;
@@ -52,22 +51,48 @@ public class MainAppServer extends AppServer {
 
     private void OperatorCalc() throws CheckDataException, SQLException, CacheException {
         String[] calcData = paramString("order").split("\\|");
+        if (calcData[calcData.length - 1].equals("]}")){
+            calcData = Arrays.copyOf(calcData, calcData.length - 1);
+        }
         Order order = new Order();
         order.setCityByID(1);
+
+        order.setHour(MainUtils.parseBoolean(calcData[0]));
+        order.setPrior(MainUtils.parseBoolean(calcData[1]));
+        order.setRegDate(DateTimeUtils.convertFromCache(calcData[2]));
+        order.setWorkDate(DateTimeUtils.convertFromCache(calcData[3]));
+        order.setClientID(Integer.parseInt(calcData[4]));
+        order.setCalledID(calcData[5]);
+
 
         Connection connection = null;
         try {
             connection = GeoApplication.getInstance().getGeoMySQLConnection();
             for (int itemID = 6; itemID < calcData.length; itemID = itemID + 5) { // Разбираем actions
-                if (calcData[itemID].equals("1") || calcData[itemID].equals("28")) { // Если точка маршрута
-                    String str = calcData[itemID + 2].split(" - ")[0];
-                    GeoObject routePoint = GeoApplication.getInstance().getGeoCode().geoCodeDispatcher(str, connection);
-                    order.addRoutePoint(RoutePoint.fromGeoObject(routePoint));
-                    if (routePoint.isCheck()){
-                        GEO.SetGeoCode(aTaxiApplication.getDataBase(), routePoint.searchString, routePoint.getTaxiGeoCodeData());
-                        GEO.SetGeoCode(aTaxiApplication.getDataBase(), routePoint.clearSearchString, routePoint.getTaxiGeoCodeData());
+
+                String actionConstantID = calcData[itemID];
+                String actionValue = calcData[itemID + 1];
+                String actionNote = calcData[itemID + 2];
+                String actionDate = calcData[itemID + 3];
+                String actionIsDeleted = calcData[itemID + 4];
+
+                // System.out.println(actionConstantID + "|" + actionValue + "|"+ actionNote);
+                if (actionIsDeleted.equals("0")){
+                    if (actionConstantID.equals("85")) { // Входящий звонок
+                        order.setCallerID(actionNote);
                     }
-                } // Если точка маршрут
+                    if (actionConstantID.equals("1") || actionConstantID.equals("28")) { // Если точка маршрута
+                        String str = calcData[itemID + 2].split(" - ")[0];
+                        GeoObject routePoint = GeoApplication.getInstance().getGeoCode().geoCodeDispatcher(str, connection);
+                        order.addRoutePoint(RoutePoint.fromGeoObject(routePoint));
+                        if (routePoint.isCheck()){
+                            GEO.SetGeoCode(aTaxiApplication.getDataBase(), routePoint.searchString, routePoint.getTaxiGeoCodeData());
+                            GEO.SetGeoCode(aTaxiApplication.getDataBase(), routePoint.clearSearchString, routePoint.getTaxiGeoCodeData());
+                        }
+                    } // Если точка маршрут
+                }
+
+
             } // Разбираем actions
             order.calcOrder();
 

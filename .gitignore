@@ -27,4 +27,8 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+
+
 /server.properties
+/keystore.jks
+/log/
