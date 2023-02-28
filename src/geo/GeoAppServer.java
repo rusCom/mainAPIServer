@@ -61,7 +61,7 @@ public class GeoAppServer extends AppServer {
                 geoObject = GeoObject.fromGeoMySQLDatabase(resultSet);
                 GeoSQLThread.getInstance().addQuery("UPDATE `geocode_str` set `check_count` = `check_count` + 1 where `name` = '" + clearSearchString + "';");
             } else {
-                GeoSQLThread.getInstance().addQuery("INSERT INTO `geocode_str` (`name`) values ('" + clearSearchString + "');");
+                GeoSQLThread.getInstance().addQuery("INSERT INTO `geocode_str` (`name`, `check_count`) values ('" + clearSearchString + "', 10);");
             }
         } finally {
             if (connection != null) {

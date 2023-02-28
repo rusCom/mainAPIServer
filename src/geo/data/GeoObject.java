@@ -37,20 +37,18 @@ public class GeoObject extends Location {
 
     private void clearStreetsData() throws SQLException {
         if (isCheck()) {
-            String newName = null;
             if (name.contains("улица ")) {
-                newName = name.replace("улица ", "");
+                name = name.replace("улица ", "");
+                GeoSQLThread.getInstance().addQuery("update `objects_google` set `name` = '" + name + "' where `place_id` = '" + placeId + "'");
             }
             if (name.contains(" улица")) {
-                newName = name.replace(" улица", "");
+                name = name.replace(" улица", "");
+                GeoSQLThread.getInstance().addQuery("update `objects_google` set `name` = '" + name + "' where `place_id` = '" + placeId + "'");
             }
-
-            if (newName != null) {
-                String SQL = "update `objects_google` set `name` = '" + newName + "' where `place_id` = '" + placeId + "'";
-                GeoSQLThread.getInstance().addQuery(SQL);
-                name = newName;
+            if (name.contains(" улица ")) {
+                name = name.replace(" улица ", "");
+                GeoSQLThread.getInstance().addQuery("update `objects_google` set `name` = '" + name + "' where `place_id` = '" + placeId + "'");
             }
-
 
             if (name.contains("ул. ")) {
                 name = name.replace("ул. ", "");
@@ -63,6 +61,15 @@ public class GeoObject extends Location {
                 GeoSQLThread.getInstance().addQuery(SQL);
             }
 
+            if (description.endsWith(",")){
+                description = description.substring(0, description.length() - 1);
+                GeoSQLThread.getInstance().addQuery("update `objects_google` set `dsc` = '" + description + "' where `place_id` = '" + placeId + "'");
+            }
+            if (description.endsWith(", Россия")){
+                description = description.replace(", Россия", "");
+                GeoSQLThread.getInstance().addQuery("update `objects_google` set `dsc` = '" + description + "' where `place_id` = '" + placeId + "'");
+            }
+
             if (description.contains(" улица")) {
                 description = description.replace(" улица", "");
                 GeoSQLThread.getInstance().addQuery("update `objects_google` set `dsc` = '" + description + "' where `place_id` = '" + placeId + "'");
@@ -72,18 +79,36 @@ public class GeoObject extends Location {
                 description = "село Зубово, Уфимский район, Республика Башкортостан";
                 GeoSQLThread.getInstance().addQuery("update `objects_google` set `dsc` = '" + description + "' where `place_id` = '" + placeId + "'");
             }
+            if (description.equals("село Лебяжий, Зубовский сельсовет, Уфимский район, Республика Башкортостан")) {
+                description = "село Лебяжий, Уфимский район, Республика Башкортостан";
+                GeoSQLThread.getInstance().addQuery("update `objects_google` set `dsc` = '" + description + "' where `place_id` = '" + placeId + "'");
+            }
             if (description.equals("деревня Дорогино, Кирилловский сельсовет, Уфимский район, Республика Башкортостан")) {
                 description = "деревня Дорогино, Уфимский район, Республика Башкортостан";
                 GeoSQLThread.getInstance().addQuery("update `objects_google` set `dsc` = '" + description + "' where `place_id` = '" + placeId + "'");
             }
-            if (description.equals("село санатория Юматово имени 15-летия БАССР, Юматовский сельсовет, Уфимский район, Республика Башкортостан, Россия")) {
-                description = "село санатория Юматово имени 15-летия БАССР, Уфимский район, Республика Башкортостан, Россия";
+            if (description.equals("село санатория Юматово имени 15-летия БАССР, Юматовский сельсовет, Уфимский район, Республика Башкортостан")) {
+                description = "село санатория Юматово имени 15-летия БАССР, Уфимский район, Республика Башкортостан";
                 GeoSQLThread.getInstance().addQuery("update `objects_google` set `dsc` = '" + description + "' where `place_id` = '" + placeId + "'");
             }
             if (description.equals("ст Цветы Башкирии, Уфа, Республика Башкортостан")) {
                 description = "Цветы Башкирии, Уфа, Республика Башкортостан";
                 GeoSQLThread.getInstance().addQuery("update `objects_google` set `dsc` = '" + description + "' where `place_id` = '" + placeId + "'");
             }
+            if (description.equals("посёлок 8 Марта, Ленинский район, Уфа, Республика Башкортостан")) {
+                description = "посёлок 8 Марта, Уфа, Республика Башкортостан";
+                GeoSQLThread.getInstance().addQuery("update `objects_google` set `dsc` = '" + description + "' where `place_id` = '" + placeId + "'");
+            }
+            if (description.equals("микрорайон Шакша, Калининский район, Уфа, Республика Башкортостан")) {
+                description = "микрорайон Шакша, Уфа, Республика Башкортостан";
+                GeoSQLThread.getInstance().addQuery("update `objects_google` set `dsc` = '" + description + "' where `place_id` = '" + placeId + "'");
+            }
+            if (description.equals("микрорайон Инорс-1, микрорайон Инорс, Калининский район, Уфа, Республика Башкортостан")) {
+                description = "Уфа, Республика Башкортостан";
+                GeoSQLThread.getInstance().addQuery("update `objects_google` set `dsc` = '" + description + "' where `place_id` = '" + placeId + "'");
+            }
+
+
 
 
         }
@@ -143,6 +168,7 @@ public class GeoObject extends Location {
         jsonObject.put("manual_check", manualCheck);
         jsonObject.put("clear_search_string", clearSearchString);
         jsonObject.put("search_string", searchString);
+        jsonObject.put("check", isCheck());
 
         return jsonObject;
     }

@@ -42,8 +42,6 @@ public class GeoCode {
             if (geoObject == null) {
                 geoObject = new GeoObject();
             }
-            geoObject.searchString = searchString;
-            geoObject.clearSearchString = clearSearchString;
 
             if (geoObject.getType().equals("street_address")) { // Если найден конкретный адрес, то увеличиваем счетчик для улицы по адресу
                 GetStreet(clearSearchString, connection);
@@ -166,6 +164,10 @@ public class GeoCode {
             MySQLTools.closeStatement(statement);
             MySQLTools.closeResultSet(resultSet);
         }
+
+        geoObject.searchString = searchString;
+        geoObject.clearSearchString = clearSearchString;
+
         return geoObject;
     }
 
@@ -237,9 +239,14 @@ public class GeoCode {
         searchString = searchString.replace("/ ", "/");
         searchString = searchString.replace(" /", "/");
         searchString = searchString.replace(" корп ", "к");
+        searchString = searchString.replace(" корпус ", "к");
         searchString = searchString.replace("стр ", "стр");
         searchString = searchString.replace("/чд", "");
         searchString = searchString.replace(" )", ")");
+
+        searchString = searchString.replace("е", "ё");
+        searchString = searchString.replace("ё", "е");
+
 
         searchString = replaceSearchStringLast(searchString, " стадион", "");
 
@@ -299,6 +306,7 @@ public class GeoCode {
         searchString = replaceSearchStringLast(searchString, "/к7", "к7");
         searchString = replaceSearchStringLast(searchString, "/к8", "к8");
         searchString = replaceSearchStringLast(searchString, "/к9", "к9");
+
 
         searchString = replaceSearchStringLast(searchString, "/к1)", "к1)");
         searchString = replaceSearchStringLast(searchString, "/к2)", "к2)");

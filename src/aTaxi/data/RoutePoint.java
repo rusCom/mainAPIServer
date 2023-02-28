@@ -15,6 +15,8 @@ public class RoutePoint extends GeoObject {
         routePoint.latitude = geoObject.getLatitude();
         routePoint.longitude = geoObject.getLongitude();
         routePoint.type = geoObject.getType();
+        routePoint.searchString = geoObject.searchString;
+        routePoint.clearSearchString = geoObject.clearSearchString;
         return routePoint;
     }
     public void setParking(Parking parking, int parkingDistance) {

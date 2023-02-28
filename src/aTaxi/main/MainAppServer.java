@@ -51,9 +51,14 @@ public class MainAppServer extends AppServer {
 
     private void OperatorCalc() throws CheckDataException, SQLException, CacheException {
         String[] calcData = paramString("order").split("\\|");
+        if (calcData.length < 6){
+            calcData = Arrays.copyOf(calcData, calcData.length + 1);
+            calcData[5] = "";
+        }
         if (calcData[calcData.length - 1].equals("]}")){
             calcData = Arrays.copyOf(calcData, calcData.length - 1);
         }
+
         Order order = new Order();
         order.setCityByID(1);
 
@@ -87,7 +92,10 @@ public class MainAppServer extends AppServer {
                         order.addRoutePoint(RoutePoint.fromGeoObject(routePoint));
                         if (routePoint.isCheck()){
                             GEO.SetGeoCode(aTaxiApplication.getDataBase(), routePoint.searchString, routePoint.getTaxiGeoCodeData());
-                            GEO.SetGeoCode(aTaxiApplication.getDataBase(), routePoint.clearSearchString, routePoint.getTaxiGeoCodeData());
+                            if (!routePoint.searchString.equalsIgnoreCase(routePoint.clearSearchString)){
+                                GEO.SetGeoCode(aTaxiApplication.getDataBase(), routePoint.clearSearchString, routePoint.getTaxiGeoCodeData());
+                            }
+
                         }
                     } // Если точка маршрут
                 }
