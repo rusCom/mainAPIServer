@@ -13,6 +13,13 @@ public class DateTimeUtils {
         return LocalDateTime.parse(cacheDate, formatter);
     }
 
+    public static LocalDateTime convertFromCache(String cacheDate, boolean curIsNUll) {
+        if (cacheDate.equals("") && curIsNUll)return LocalDateTime.now();
+        if (cacheDate.equals("0") && curIsNUll)return LocalDateTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+        return LocalDateTime.parse(cacheDate, formatter);
+    }
+
     public static String convertToCache(LocalDateTime date){
         String res = DateTimeFormatter.ISO_LOCAL_DATE_TIME.format(date);
         return res;

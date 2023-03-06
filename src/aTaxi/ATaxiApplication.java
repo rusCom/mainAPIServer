@@ -60,6 +60,16 @@ public class ATaxiApplication {
         parkings = new ArrayList<>();
 
         taximeterApplication = new TaximeterApplication();
+
+        if (!MainUtils.getInstance().getPropertyString("tinkoff.terminalKey").equals("")){
+            JSONObject tinkoffTerminalData = new JSONObject();
+            tinkoffTerminalData.put("terminal_key", MainUtils.getInstance().getPropertyString("tinkoff.terminalKey"));
+            tinkoffTerminalData.put("public_key", MainUtils.getInstance().getPropertyString("tinkoff.publicKey"));
+            taximeterApplication.setTinkoffTerminalData(tinkoffTerminalData);
+        }
+
+
+
         this.loadApplicationPreferences();
     }
 

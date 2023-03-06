@@ -15,14 +15,18 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import static tools.MainUtils.JSONGetString;
+
 public class PaymentsAppServer extends AppServer {
+    Database database;
+    Integer UserID;
     @Override
     public AppServerResponse response(String target, Request baseRequest) throws CacheException, CheckDataException, SQLException, IOException {
         super.response(target, baseRequest);
-        Database database = ATaxiApplication.getInstance().getDataBase();
-        if (target.startsWith("/ataxi/payments/terminal/")){
-            Integer UserID = Payments.TerminalAuth(database, paramString("token", false));
-            if (!UserID.equals(0)){
+        database = ATaxiApplication.getInstance().getDataBase();
+        UserID = Payments.TerminalAuth(database, paramString("token", false));
+        if (target.startsWith("/ataxi/payments/terminal/")) {
+            if (!UserID.equals(0)) {
                 switch (target) {
                     case "/ataxi/payments/terminal/check" -> {
                         JSONObject driverJSON = new JSONObject(Payments.TerminalCheck(database, paramString("data")));
@@ -46,22 +50,43 @@ public class PaymentsAppServer extends AppServer {
                         }
                     }
                 }
+            } else {
+                appServerResponse.setStatus(401);
             }
-            else {appServerResponse.setStatus(401);}
-        }
-        else if (target.equals("/ataxi/payments/notifications")){
+        } else if (target.equals("/ataxi/payments/tinkoff/notifications")) {
+            if (UserID.equals(0)) {
+                appServerResponse.setStatus(401);
+            } else {
+                paymentsTinkoffNotifications();
+            }
+        } else if (target.equals("/ataxi/payments/notifications")) {
             paymentsNotifications();
         }
         return appServerResponse;
     }
 
-    private void paymentsNotifications(){
-        if (baseRequest.getMethod().equals("POST")){
-            appServerResponse.setStatus(200, getBodyJSON());
+    private void paymentsTinkoffNotifications() throws CacheException {
+        appServerResponse.setStatus(400);
+        if (baseRequest.getMethod().equals("POST")) {
+            JSONObject result = new JSONObject();
+            String TerminalKey = JSONGetString(getBodyJSON(), "TerminalKey");
+            String OrderId = JSONGetString(getBodyJSON(), "OrderId");
+            String Status = JSONGetString(getBodyJSON(), "Status");
+            if (TerminalKey.equals("1676272733874")){
+                if (!OrderId.equals("")){
+                    Payments.TinkoffPay(database, UserID, OrderId, Status);
+                    appServerResponse.setStatus(200);
+                }
+            }
         }
-
     }
 
+    private void paymentsNotifications() {
+        if (baseRequest.getMethod().equals("POST")) {
+            appServerResponse.setStatus(200, getBodyJSON());
+        }
+        appServerResponse.setStatus(200, getBodyJSON());
+    }
 
 
 }

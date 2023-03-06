@@ -5,7 +5,6 @@ import aTaxiAPI.GEO;
 import com.intersys.objects.CacheException;
 import geo.GeoApplication;
 import geo.services.GeoSQLThread;
-import okhttp3.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import tools.MainUtils;
@@ -16,7 +15,6 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Objects;
 
 import static tools.MainUtils.JSONGetInteger;
 import static tools.MainUtils.JSONGetString;

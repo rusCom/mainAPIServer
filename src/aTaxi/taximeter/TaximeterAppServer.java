@@ -129,6 +129,7 @@ public class TaximeterAppServer extends AppServer {
                         case "/ataxi/taximeter/payments/corporate" ->
                                 appServerResponse.setStatus(200, new JSONArray(Taximeter.GetPaymentsCorporateTaxi(database, curDriver.getID(), paramInt("last_id", 0))));
                         case "/ataxi/taximeter/payments/order" -> paymentsOrder();
+                        case "/ataxi/taximeter/payments/tinkoff" -> appServerResponse.setStatus(200, taximeterApplication.getTinkoffTerminalData());
                         case "/ataxi/taximeter/last/his_messages" ->
                                 appServerResponse.setStatus(200, new JSONArray(TaximeterLast.GetHisMessages(database, curDriver.getID(), paramInt("last_id", 0))));
                         case "/ataxi/taximeter/last/driver/online", "/ataxi/taximeter/driver/free" -> {
@@ -288,11 +289,8 @@ public class TaximeterAppServer extends AppServer {
                     availablePayments.put("sbp", true);
                     availablePayments.put("detail", "Комиссия при оплате через СПБ 6%. Комиссия по карте от 6% в зависимости от Вашего банка, т.к. некоторые банки берут дополнительную комиссию.");
                 }
-
                 preferences.put("available_payments", availablePayments);
-
             }
-
 
 
             /// ****************** На какие каналы надо подписать приложение для получения рассылки
@@ -416,11 +414,13 @@ public class TaximeterAppServer extends AppServer {
             appServerResponse.setStatus(400, "Ошибка проведения платежа. Попробуйте попозже");
             Integer amount = paramInt("amount");
             JSONObject result = new JSONObject(Taximeter.PaymentOrder(database, curDriver.getID(), amount, source));
-            LocalDateTime lastPaymentDate = DateTimeUtils.convertFromCache(result.getString("last_payment_date"));
+            LocalDateTime lastPaymentDate = DateTimeUtils.convertFromCache(result.getString("last_payment_date"), true);
             if (lastPaymentDate.isBefore(LocalDateTime.now().minusDays(30))){
                 result.put("message", true);
             }
             result.put("link", taximeterApplication.paymentInstructionLink);
+            result.put("terminal_key", taximeterApplication.getTinkoffTerminalData().getString("terminal_key"));
+            result.put("public_key", taximeterApplication.getTinkoffTerminalData().getString("public_key"));
             appServerResponse.setStatus(200, result);
         }
         else if (source.equals("qiwi")) {
@@ -428,7 +428,7 @@ public class TaximeterAppServer extends AppServer {
 
             Integer amount = paramInt("amount");
             JSONObject result = new JSONObject(Taximeter.PaymentOrder(database, curDriver.getID(), amount, source));
-            LocalDateTime lastPaymentDate = DateTimeUtils.convertFromCache(result.getString("last_payment_date"));
+            LocalDateTime lastPaymentDate = DateTimeUtils.convertFromCache(result.getString("last_payment_date"), true);
             if (lastPaymentDate.isBefore(LocalDateTime.now().minusDays(30))){
                 result.put("message", true);
             }

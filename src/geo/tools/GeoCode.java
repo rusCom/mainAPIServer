@@ -249,6 +249,7 @@ public class GeoCode {
 
 
         searchString = replaceSearchStringLast(searchString, " стадион", "");
+        searchString = replaceSearchStringLast(searchString, " магазин", "");
 
 
         searchString = searchString.replace("  ", " ");

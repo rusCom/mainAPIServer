@@ -87,6 +87,10 @@ public class GeoObject extends Location {
                 description = "деревня Дорогино, Уфимский район, Республика Башкортостан";
                 GeoSQLThread.getInstance().addQuery("update `objects_google` set `dsc` = '" + description + "' where `place_id` = '" + placeId + "'");
             }
+            if (description.equals("деревня Кириллово, Кирилловский сельсовет, Уфимский район, Республика Башкортостан")) {
+                description = "деревня Кириллово, Уфимский район, Республика Башкортостан";
+                GeoSQLThread.getInstance().addQuery("update `objects_google` set `dsc` = '" + description + "' where `place_id` = '" + placeId + "'");
+            }
             if (description.equals("село санатория Юматово имени 15-летия БАССР, Юматовский сельсовет, Уфимский район, Республика Башкортостан")) {
                 description = "село санатория Юматово имени 15-летия БАССР, Уфимский район, Республика Башкортостан";
                 GeoSQLThread.getInstance().addQuery("update `objects_google` set `dsc` = '" + description + "' where `place_id` = '" + placeId + "'");

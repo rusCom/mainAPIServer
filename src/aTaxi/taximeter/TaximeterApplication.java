@@ -33,6 +33,8 @@ public class TaximeterApplication {
     private QiwiNumber curFormQiwiNumber;
     public Integer documentsTimeout; // Через какое время надо подписывать документы повторно водителям. Задается в днях
 
+    private JSONObject tinkoffTerminalData;
+
     public void loadApplicationPreferences(JSONObject data) {
         this.supportPhone = JSONGetString(data, "support_phone");
         this.licenseAgreementLink = JSONGetString(data, "license_agreement_link");
@@ -107,6 +109,14 @@ public class TaximeterApplication {
             }
         }
         return driverTariffPlanResult;
+    }
+
+    public JSONObject getTinkoffTerminalData() {
+        return tinkoffTerminalData;
+    }
+
+    public void setTinkoffTerminalData(JSONObject tinkoffTerminalData) {
+        this.tinkoffTerminalData = tinkoffTerminalData;
     }
 
     public String getLicenseAgreementLink() {
