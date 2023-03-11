@@ -33,7 +33,6 @@ public class TaximeterApplication {
     private QiwiNumber curFormQiwiNumber;
     public Integer documentsTimeout; // Через какое время надо подписывать документы повторно водителям. Задается в днях
 
-    private JSONObject tinkoffTerminalData;
 
     public void loadApplicationPreferences(JSONObject data) {
         this.supportPhone = JSONGetString(data, "support_phone");
@@ -91,8 +90,8 @@ public class TaximeterApplication {
         }
 
         driverTariffPlans.clear();
-        if (data.has("unlimited_driver_tariff_plans")) {
-            JSONArray unlimited_driver_tariff_plans = data.getJSONArray("unlimited_driver_tariff_plans");
+        if (data.has("driver_tariff_plans")) {
+            JSONArray unlimited_driver_tariff_plans = data.getJSONArray("driver_tariff_plans");
             for (int itemID = 0; itemID < unlimited_driver_tariff_plans.length(); itemID++) {
                 driverTariffPlans.add(new DriverTariffPlan(unlimited_driver_tariff_plans.getJSONObject(itemID)));
             }
@@ -111,19 +110,11 @@ public class TaximeterApplication {
         return driverTariffPlanResult;
     }
 
-    public JSONObject getTinkoffTerminalData() {
-        return tinkoffTerminalData;
-    }
-
-    public void setTinkoffTerminalData(JSONObject tinkoffTerminalData) {
-        this.tinkoffTerminalData = tinkoffTerminalData;
-    }
-
     public String getLicenseAgreementLink() {
         return licenseAgreementLink;
     }
 
-    public JSONArray getUnlimitedDriverTariffPlans(Integer cityID) {
+    public JSONArray getDriverTariffPlans(Integer cityID) {
         JSONArray result = new JSONArray();
         for (DriverTariffPlan driverTariffPlan : driverTariffPlans) {
             if (driverTariffPlan.CityID.equals(cityID)) {

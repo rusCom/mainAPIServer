@@ -226,6 +226,17 @@ public class MainUtils {
         return Boolean.parseBoolean(data);
     }
 
+    public static Integer parseInteger(String data, Integer def){
+        if (data == null)return def;
+        if (data.equals(""))return def;
+        try {
+            return Integer.parseInt(data);
+        }
+        catch (Exception ignored){}
+        return def;
+
+    }
+
     public static Integer JSONGetInteger(JSONObject data, String field) {
         Integer result = null;
         if (data.has(field)) {
@@ -233,7 +244,14 @@ public class MainUtils {
             if (resString.contains(".")){
                 resString = resString.split("\\.")[0];
             }
-            result = Integer.parseInt(resString);
+            if (!resString.equals("")){
+                try {
+                    result = Integer.parseInt(resString);
+                }
+                catch (Exception ignored){}
+
+            }
+
         }
         return result;
     }

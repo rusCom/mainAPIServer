@@ -24,6 +24,9 @@ public class ATaxiApplication {
     private final List<Parking> parkings;
     private final TaximeterApplication taximeterApplication;
 
+    private final String tinkoffTerminalKey;
+    private final String tinkoffPublicKey;
+
     public String dataBaseURL, dataBaseUser, dataBasePassword;
 
     public static ATaxiApplication getInstance() throws CacheException {
@@ -61,12 +64,8 @@ public class ATaxiApplication {
 
         taximeterApplication = new TaximeterApplication();
 
-        if (!MainUtils.getInstance().getPropertyString("tinkoff.terminalKey").equals("")){
-            JSONObject tinkoffTerminalData = new JSONObject();
-            tinkoffTerminalData.put("terminal_key", MainUtils.getInstance().getPropertyString("tinkoff.terminalKey"));
-            tinkoffTerminalData.put("public_key", MainUtils.getInstance().getPropertyString("tinkoff.publicKey"));
-            taximeterApplication.setTinkoffTerminalData(tinkoffTerminalData);
-        }
+        tinkoffTerminalKey = MainUtils.getInstance().getPropertyString("tinkoff.terminalKey");
+        tinkoffPublicKey = MainUtils.getInstance().getPropertyString("tinkoff.publicKey");
 
 
 
@@ -147,6 +146,14 @@ public class ATaxiApplication {
         }
 
         return result;
+    }
+
+    public String getTinkoffTerminalKey() {
+        return tinkoffTerminalKey;
+    }
+
+    public String getTinkoffPublicKey() {
+        return tinkoffPublicKey;
     }
 
     public List<Parking> getParkings() {

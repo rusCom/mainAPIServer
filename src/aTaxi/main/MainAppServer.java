@@ -66,7 +66,7 @@ public class MainAppServer extends AppServer {
         order.setPrior(MainUtils.parseBoolean(calcData[1]));
         order.setRegDate(DateTimeUtils.convertFromCache(calcData[2]));
         order.setWorkDate(DateTimeUtils.convertFromCache(calcData[3]));
-        order.setClientID(Integer.parseInt(calcData[4]));
+        order.setClientID(MainUtils.parseInteger(calcData[4], 0), aTaxiApplication.getDataBase());
         order.setCalledID(calcData[5]);
 
 
@@ -99,7 +99,6 @@ public class MainAppServer extends AppServer {
                         }
                     } // Если точка маршрут
                 }
-
 
             } // Разбираем actions
             order.calcOrder();

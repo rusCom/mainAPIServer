@@ -30,6 +30,7 @@ public class Driver extends data.driver.Driver {
     public Integer status;
     public Float balance;
     public Integer driverTariffPlanID;
+    public LocalDateTime driverTariffPlanEndDate;
     private String phone;
     public Driver() {
     }
@@ -80,6 +81,7 @@ public class Driver extends data.driver.Driver {
             status = JSONGetInteger(data, "status");
             balance = JSONGetFloat(data, "balance");
             driverTariffPlanID = JSONGetInteger(data, "tariff_plan_id");
+            driverTariffPlanEndDate = DateTimeUtils.convertFromCache(JSONGetString(data, "tariff_plan_end_date"));
 
             licenseAgreementDate = DateTimeUtils.convertFromCache(JSONGetString(data, "license_agreement_date"));
         }

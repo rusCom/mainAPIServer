@@ -2,6 +2,7 @@ package aTaxi.data;
 
 import aTaxi.ATaxiApplication;
 import com.intersys.objects.CacheException;
+import com.intersys.objects.Database;
 import geo.data.Directions;
 import geo.data.GeoObject;
 import geo.tools.LocationsCache;
@@ -33,6 +34,7 @@ public class Order {
     private int clientID;
     private String calledID;
     private String callerID;
+    private Client client;
 
     public Order() {
         route = new ArrayList<>();
@@ -151,8 +153,13 @@ public class Order {
         return clientID;
     }
 
-    public void setClientID(int clientID) {
-        this.clientID = clientID;
+    public void setClientID(int clientID, Database database) throws CacheException {
+        if (clientID != 0){
+            String Data = aTaxiAPI.Data.ClientBTS(database, clientID);
+            System.out.println(Data);
+            this.clientID = clientID;
+            this.client = Client.fromJSON(new JSONObject(Data));
+        }
     }
 
     public String getCalledID() {
@@ -216,6 +223,11 @@ public class Order {
         result.put("callerID", callerID);
 
         result.put("ataxi_data", getATaxiData());
+
+        if (client != null){
+            result.put("client", client.toJSON());
+
+        }
 
         return result;
     }

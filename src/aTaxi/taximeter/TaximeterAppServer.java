@@ -129,7 +129,6 @@ public class TaximeterAppServer extends AppServer {
                         case "/ataxi/taximeter/payments/corporate" ->
                                 appServerResponse.setStatus(200, new JSONArray(Taximeter.GetPaymentsCorporateTaxi(database, curDriver.getID(), paramInt("last_id", 0))));
                         case "/ataxi/taximeter/payments/order" -> paymentsOrder();
-                        case "/ataxi/taximeter/payments/tinkoff" -> appServerResponse.setStatus(200, taximeterApplication.getTinkoffTerminalData());
                         case "/ataxi/taximeter/last/his_messages" ->
                                 appServerResponse.setStatus(200, new JSONArray(TaximeterLast.GetHisMessages(database, curDriver.getID(), paramInt("last_id", 0))));
                         case "/ataxi/taximeter/last/driver/online", "/ataxi/taximeter/driver/free" -> {
@@ -262,7 +261,14 @@ public class TaximeterAppServer extends AppServer {
             // Если водитель не грузовой, то показываем рейтинг и безлимит
             if (!curDriver.tariff.equals("cargo")) {
                 preferences.put("use_rating", true);
-                preferences.put("unlimited_tariff_plans", taximeterApplication.getUnlimitedDriverTariffPlans(curDriver.city.ID));
+                if (version < 42){
+                    preferences.put("unlimited_tariff_plans", taximeterApplication.getDriverTariffPlans(curDriver.city.ID));
+                }
+                else {
+                    preferences.put("tariff_plans", taximeterApplication.getDriverTariffPlans(curDriver.city.ID));
+                }
+
+
             }
 
             preferences.put("rest_hosts", taximeterApplication.restHosts);
@@ -280,15 +286,22 @@ public class TaximeterAppServer extends AppServer {
 
                 availablePayments.put("ckassa", "https://vk.com/ataxi10?w=wall-148683721_53");
                 availablePayments.put("ckassa_note", "Требуется установка приложения. Общая комиссия около 11%.");
-                availablePayments.put("qiwi_terminal", "https://vk.com/ataxi10?w=wall-148683721_275");
+                availablePayments.put("qiwi_terminal", "https://ataxi24.ru/qiwi-terminal/");
                 availablePayments.put("qiwi_terminal_note", "Оплата наличными через Qiwi терминалы. Комиссия 4% + Комиссия терминала.");
-                availablePayments.put("qiwi_wallet", "https://vk.com/ataxi10?w=wall-148683721_275");
+                availablePayments.put("qiwi_wallet", "https://ataxi24.ru/qiwi-wallet/");
                 availablePayments.put("qiwi_wallet_note", "Оплата с зарегистрированного Qiwi кошелька. Комиссия 4%.");
 
                 if (version >= 41){
                     availablePayments.put("sbp", true);
                     availablePayments.put("detail", "Комиссия при оплате через СПБ 6%. Комиссия по карте от 6% в зависимости от Вашего банка, т.к. некоторые банки берут дополнительную комиссию.");
                 }
+
+                if (version >= 42){
+                    availablePayments.put("tinkoff", true);
+                    availablePayments.put("tinkoff_note", "Оплата картой любого банка. Комиссия 6%.");
+                    availablePayments.put("qiwi", false);
+                }
+
                 preferences.put("available_payments", availablePayments);
             }
 
@@ -325,6 +338,14 @@ public class TaximeterAppServer extends AppServer {
             }
             if (curDriver.taximeterFreeOrderCount != 20) {
                 profile.put("free_order_count", curDriver.taximeterFreeOrderCount);
+            }
+
+
+            if (curDriver.driverTariffPlanID != 1){
+                JSONObject tariff = new JSONObject();
+                tariff.put("id", curDriver.driverTariffPlanID);
+                tariff.put("date", curDriver.driverTariffPlanEndDate);
+                profile.put("tariff_plan", tariff);
             }
 
 
@@ -419,8 +440,21 @@ public class TaximeterAppServer extends AppServer {
                 result.put("message", true);
             }
             result.put("link", taximeterApplication.paymentInstructionLink);
-            result.put("terminal_key", taximeterApplication.getTinkoffTerminalData().getString("terminal_key"));
-            result.put("public_key", taximeterApplication.getTinkoffTerminalData().getString("public_key"));
+            result.put("terminal_key", aTaxiApplication.getTinkoffTerminalKey());
+            result.put("public_key", aTaxiApplication.getTinkoffPublicKey());
+            appServerResponse.setStatus(200, result);
+        }
+        else if (source.equals("tinkoff")){
+            appServerResponse.setStatus(400, "Ошибка проведения платежа. Попробуйте попозже");
+            Integer amount = paramInt("amount");
+            JSONObject result = new JSONObject(Taximeter.PaymentOrder(database, curDriver.getID(), amount, source));
+            LocalDateTime lastPaymentDate = DateTimeUtils.convertFromCache(result.getString("last_payment_date"), true);
+            if (lastPaymentDate.isBefore(LocalDateTime.now().minusDays(30))){
+                result.put("message", true);
+            }
+            result.put("link", taximeterApplication.paymentInstructionLink);
+            result.put("terminal_key",  aTaxiApplication.getTinkoffTerminalKey());
+            result.put("public_key", aTaxiApplication.getTinkoffPublicKey());
             appServerResponse.setStatus(200, result);
         }
         else if (source.equals("qiwi")) {

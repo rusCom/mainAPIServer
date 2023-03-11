@@ -10,6 +10,7 @@ public class DriverTariffPlan {
     public Integer Cost;
     Integer lastID;
     public Integer CityID;
+    String note;
 
     public DriverTariffPlan(JSONObject data)  {
         ID = JSONGetInteger(data, "id");
@@ -17,6 +18,7 @@ public class DriverTariffPlan {
         Cost = JSONGetInteger(data, "cost");
         CityID = JSONGetInteger(data, "city_id");
         lastID = JSONGetInteger(data, "last_id");
+        note = JSONGetString(data, "note");
     }
 
     public JSONObject taximeterJSON(){
@@ -29,6 +31,7 @@ public class DriverTariffPlan {
         result.put("name", Name);
         result.put("cost", Cost);
         result.put("last_id", lastID);
+        result.put("note", note);
         return result;
     }
 }

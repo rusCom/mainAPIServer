@@ -49,22 +49,14 @@ public class PaymentsAppServer extends AppServer {
                             appServerResponse.setStatus(400, "Ошибка проведения платежа. Попробуйте попозже.");
                         }
                     }
+                    case "/ataxi/payments/terminal/tinkoff/notifications" -> paymentsTinkoffNotifications();
                 }
             } else {
                 appServerResponse.setStatus(401);
             }
-        } else if (target.equals("/ataxi/payments/tinkoff/notifications")) {
-            if (UserID.equals(0)) {
-                appServerResponse.setStatus(401);
-            } else {
-                paymentsTinkoffNotifications();
-            }
-        } else if (target.equals("/ataxi/payments/notifications")) {
-            paymentsNotifications();
         }
         return appServerResponse;
     }
-
     private void paymentsTinkoffNotifications() throws CacheException {
         appServerResponse.setStatus(400);
         if (baseRequest.getMethod().equals("POST")) {
@@ -74,19 +66,11 @@ public class PaymentsAppServer extends AppServer {
             String Status = JSONGetString(getBodyJSON(), "Status");
             if (TerminalKey.equals("1676272733874")){
                 if (!OrderId.equals("")){
-                    Payments.TinkoffPay(database, UserID, OrderId, Status);
+                    Payments.TinkoffPay(database, OrderId, Status);
                     appServerResponse.setStatus(200);
                 }
             }
         }
     }
-
-    private void paymentsNotifications() {
-        if (baseRequest.getMethod().equals("POST")) {
-            appServerResponse.setStatus(200, getBodyJSON());
-        }
-        appServerResponse.setStatus(200, getBodyJSON());
-    }
-
 
 }

@@ -9,15 +9,23 @@ public class DateTimeUtils {
     public static LocalDateTime convertFromCache(String cacheDate) {
         if (cacheDate.equals(""))return null;
         if (cacheDate.equals("0"))return null;
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        return LocalDateTime.parse(cacheDate, formatter);
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            return LocalDateTime.parse(cacheDate, formatter);
+        }
+        catch (Exception ignored){}
+        return null;
     }
 
     public static LocalDateTime convertFromCache(String cacheDate, boolean curIsNUll) {
         if (cacheDate.equals("") && curIsNUll)return LocalDateTime.now();
         if (cacheDate.equals("0") && curIsNUll)return LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        return LocalDateTime.parse(cacheDate, formatter);
+        try {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+            return LocalDateTime.parse(cacheDate, formatter);
+        }
+        catch (Exception ignored){}
+        return LocalDateTime.now();
     }
 
     public static String convertToCache(LocalDateTime date){

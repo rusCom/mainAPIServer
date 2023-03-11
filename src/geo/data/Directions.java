@@ -229,7 +229,7 @@ public class Directions {
         if (isSameLocation()) {
             return;
         }
-        String url = "http://lk.toptaxi.org:8989/route?point="
+        String url = "http://api.ataxi24.ru:8989/route?point="
                 + begin.getLatitudeStr() + "," + begin.getLongitudeStr()
                 + "&point=" + end.getLatitudeStr() + "," + end.getLongitudeStr();
         // System.out.println(url);

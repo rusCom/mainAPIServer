@@ -8,7 +8,7 @@ package aTaxiAPI;
 **/
 
 public class Payments extends aTaxiAPI.JSON implements java.io.Serializable {
-    private static final long serialVersionUID = 2258;
+    private static final long serialVersionUID = 7907;
     private static String CACHE_CLASS_NAME = "aTaxiAPI.Payments";
     /**
            <p>NB: DO NOT USE IN APPLICATION(!!!).
@@ -326,17 +326,15 @@ That is 'isclass' is a primary superclass of this object.</p>
     /**
      <p>Runs method TinkoffPay in Cache.</p>
      @param db represented as com.intersys.objects.Database
-     @param inUserID represented as java.lang.Integer
      @param inOrderUID represented as java.lang.String
      @param inStatus represented as java.lang.String
      @throws com.intersys.objects.CacheException if any error occured while running the method.
      @see <a href = "http://WIN-S2LFE1VCB4Q:57772/csp/documatic/%25CSP.Documatic.cls?APP=1&PAGE=CLASS&LIBRARY=ATAXI&CLASSNAME=aTaxiAPI.Payments#TinkoffPay"> Method TinkoffPay</A>
     */
-    public static void TinkoffPay (com.intersys.objects.Database db, java.lang.Integer inUserID, java.lang.String inOrderUID, java.lang.String inStatus) throws com.intersys.objects.CacheException {
-        com.intersys.cache.Dataholder[] args = new com.intersys.cache.Dataholder[3];
-        args[0] = new com.intersys.cache.Dataholder(inUserID);
-        args[1] = new com.intersys.cache.Dataholder(inOrderUID);
-        args[2] = new com.intersys.cache.Dataholder(inStatus);
+    public static void TinkoffPay (com.intersys.objects.Database db, java.lang.String inOrderUID, java.lang.String inStatus) throws com.intersys.objects.CacheException {
+        com.intersys.cache.Dataholder[] args = new com.intersys.cache.Dataholder[2];
+        args[0] = new com.intersys.cache.Dataholder(inOrderUID);
+        args[1] = new com.intersys.cache.Dataholder(inStatus);
         com.intersys.cache.Dataholder res=db.runClassMethod(CACHE_CLASS_NAME,"TinkoffPay",args,com.intersys.objects.Database.RET_NONE);
         return;
     }
